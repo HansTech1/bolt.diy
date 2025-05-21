@@ -73,6 +73,21 @@ const gitInfo = getGitInfo();
 
 export default defineConfig((config) => {
   return {
+    // ============================
+    // Allow all hosts + CORS
+    // ============================
+    server: {
+      host: true,    // listen on all addresses, not just localhost
+      strictPort: true,
+      cors: true,    // enable CORS for all origins
+    },
+    // if you run `vite preview` on Render, you may also want:
+    preview: {
+      host: true,
+      strictPort: true,
+      cors: true,
+    },
+
     define: {
       __COMMIT_HASH: JSON.stringify(gitInfo.commitHash),
       __GIT_BRANCH: JSON.stringify(gitInfo.branch),
@@ -91,9 +106,11 @@ export default defineConfig((config) => {
       __PKG_OPTIONAL_DEPENDENCIES: JSON.stringify(pkg.optionalDependencies),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     },
+
     build: {
       target: 'esnext',
     },
+
     plugins: [
       nodePolyfills({
         include: ['buffer', 'process', 'util', 'stream'],
@@ -114,7 +131,6 @@ export default defineConfig((config) => {
               map: null,
             };
           }
-
           return null;
         },
       },
@@ -132,6 +148,7 @@ export default defineConfig((config) => {
       chrome129IssuePlugin(),
       config.mode === 'production' && optimizeCssModules({ apply: 'build' }),
     ],
+
     envPrefix: [
       'VITE_',
       'OPENAI_LIKE_API_BASE_URL',
@@ -139,6 +156,7 @@ export default defineConfig((config) => {
       'LMSTUDIO_API_BASE_URL',
       'TOGETHER_API_BASE_URL',
     ],
+
     css: {
       preprocessorOptions: {
         scss: {
